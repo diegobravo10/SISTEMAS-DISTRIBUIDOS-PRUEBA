@@ -284,3 +284,21 @@ bash# Eliminar volúmenes y recrear
 docker-compose down -v
 docker-compose up --build
 ```
+# Como Funciona 
+```
+Simulador (backend)
+   ↓
+simulatePurchase()
+   ↓
+broadcast({type:'purchase_notification', data:{...}})
+   ↓
+WebSocket
+   ↓
+Frontend recibe
+   ↓
+handlePurchaseNotification()
+   ↓
+recentActivity.unshift(data)
+   ↓
+renderActivity()
+```
