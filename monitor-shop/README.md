@@ -1,4 +1,4 @@
-# 📊 Proyecto 2: Monitor Shop (Dashboard con Simulador)
+#  Proyecto 2: Monitor Shop (Dashboard con Simulador)
 
 Dashboard de monitoreo en tiempo real con simulador automático de compras.
 
@@ -17,7 +17,7 @@ monitor-shop/
     └── public/
         └── index.html
 ```
-# 🚀 Comandos de Ejecución
+# Comandos de Ejecución
 
 Iniciar el proyecto
 bashcd monitor-shop
@@ -51,7 +51,7 @@ docker restart monitor_postgres
 
 
 ```
-#🌐 Acceso a la Aplicación
+# Acceso a la Aplicación
 
 *  Frontend (Dashboard): http://localhost:3100
 
@@ -65,7 +65,7 @@ docker restart monitor_postgres
 
 *  pgAdmin: http://localhost:5050
 
-#🗄️ Acceso a la Base de Datos
+# Acceso a la Base de Datos
 
 Conectarse vía terminal (psql)
 ```
@@ -187,7 +187,7 @@ Accede a http://localhost:3100
 
 Verás el dashboard con estadísticas
 
-Haz clic en "▶️ Iniciar" para comenzar la simulación
+Haz clic en "Iniciar" para comenzar la simulación
 
 Observa cómo aparecen compras automáticas cada 2-5 segundos
 
@@ -202,7 +202,7 @@ Ve las actualizaciones en tiempo real:
 *  Actividad reciente
 
 
-Haz clic en "⏸️ Detener" para pausar la simulación
+Haz clic en "Detener" para pausar la simulación
 
 Usa "🗑️ Limpiar" para resetear todo
 
@@ -256,7 +256,7 @@ docker image prune -a
 docker volume prune
 ```
 
-🐛 Solución de Problemas
+ Solución de Problemas
 Error: "port is already allocated"
 bash# Ver qué está usando el puerto
 ```
