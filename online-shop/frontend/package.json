@@ -1,0 +1,11 @@
+{
+  "name": "shop-frontend",
+  "version": "1.0.0",
+  "description": "Frontend para tienda online",
+  "scripts": {
+    "start": "node -e \"const handler = require('serve-handler'); const http = require('http'); const server = http.createServer((req, res) => handler(req, res, { public: 'public' })); server.listen(3000, () => console.log('Server running on http://localhost:3000'));\""
+  },
+  "dependencies": {
+    "serve-handler": "^6.1.5"
+  }
+}

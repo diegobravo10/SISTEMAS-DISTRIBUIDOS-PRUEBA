@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chat WebSocket</title>
+</head>
+<body>
+  <h2>Chat en tiempo real</h2>
+
+  <div id="messages" style="border:1px solid #333; height:200px; padding:10px; overflow:auto;"></div>
+
+  <input id="msg" placeholder="Escribe un mensaje..." />
+  <button onclick="sendMsg()">Enviar</button>
+
+  <script>
+    const ws = new WebSocket("ws://localhost:8000");
+
+    ws.onmessage = (event) => {
+      const box = document.getElementById("messages");
+      box.innerHTML += "<p>" + event.data + "</p>";
+      box.scrollTop = box.scrollHeight;
+    };
+
+    function sendMsg() {
+      const txt = document.getElementById("msg");
+      ws.send(txt.value);
+      txt.value = "";
+    }
+  </script>
+</body>
+</html>
