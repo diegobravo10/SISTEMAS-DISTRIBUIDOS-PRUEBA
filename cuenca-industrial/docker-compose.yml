@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  # RabbitMQ - Broker de mensajes
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: cuenca_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cuenca_network
+
+  # PostgreSQL - Base de datos histórica
+  postgres:
+    image: postgres:15
+    container_name: cuenca_postgres
+    environment:
+      POSTGRES_DB: alertas_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cuenca_network
+
+  # Productores de mensajes (Sensores)
+  sensores:
+    build:
+      context: ./sensores
+      dockerfile: Dockerfile
+    container_name: cuenca_sensores
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: admin
+      RABBITMQ_PASS: admin123
+    networks:
+      - cuenca_network
+    restart: unless-stopped
+
+  # Procesador de alertas (Consumidor)
+  procesador:
+    build:
+      context: ./procesador
+      dockerfile: Dockerfile
+    container_name: cuenca_procesador
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: admin
+      RABBITMQ_PASS: admin123
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: alertas_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      WS_SERVER_URL: ws://websocket-server:9000
+    networks:
+      - cuenca_network
+    restart: unless-stopped
+
+  # Servidor WebSocket
+  websocket-server:
+    build:
+      context: ./websocket-server
+      dockerfile: Dockerfile
+    container_name: cuenca_websocket
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres      # ← AÑADE ESTO
+      POSTGRES_DB: alertas_db      # ← AÑADE ESTO
+      POSTGRES_USER: admin         # ← AÑADE ESTO
+      POSTGRES_PASSWORD: admin123  # ← AÑADE ESTO
+    ports:
+      - "9000:9000"
+      - "3000:3000"
+    networks:
+      - cuenca_network
+    restart: unless-stopped
+
+networks:
+  cuenca_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
